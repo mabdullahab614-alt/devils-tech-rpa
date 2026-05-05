@@ -11,9 +11,14 @@ obvious garbage; this module is the real gate.
 import json
 import logging
 import queue
+import sys
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+
+# Project root on sys.path so sibling packages (rpa, rhino_worker) import
+# regardless of how this script is invoked.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from jsonschema import Draft202012Validator
 
@@ -120,10 +125,6 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def _worker():
-    # Lazy-imported so the listener can start before Rhino tooling is installed.
-    from rpa.sequences import build_mala
-    from rhino_worker import geometry
-
     while True:
         payload = _job_queue.get()
         job_id = payload["job_id"]
@@ -132,6 +133,12 @@ def _worker():
         log.info("job_started job_id=%s", job_id)
 
         try:
+            # Imports inside the try so any ImportError (missing rpa deps,
+            # pyautogui without X11, etc.) marks the job failed with a clear
+            # message instead of killing the worker thread.
+            from rpa.sequences import build_mala
+            from rhino_worker import geometry
+
             mesh_guid = build_mala.build_mala(payload)
             if mesh_guid is None:
                 raise RuntimeError("build_mala did not return a mesh_guid")
