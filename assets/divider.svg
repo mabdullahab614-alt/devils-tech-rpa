@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 24" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="divGold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d4af37" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#d4af37" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#d4af37" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="divShine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fff5c8" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#fff5c8" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#fff5c8" stop-opacity="0"/>
+      <animateTransform attributeName="gradientTransform" type="translate"
+        values="-1 0; 1 0; -1 0" dur="4s" repeatCount="indefinite"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Main line -->
+  <line x1="0" y1="12" x2="1200" y2="12" stroke="url(#divGold)" stroke-width="1"/>
+  <line x1="0" y1="12" x2="1200" y2="12" stroke="url(#divShine)" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- Center diamond -->
+  <g transform="translate(600, 12)">
+    <polygon points="0,-6 6,0 0,6 -6,0" fill="#d4af37">
+      <animateTransform attributeName="transform" type="rotate"
+        from="0" to="360" dur="6s" repeatCount="indefinite"/>
+    </polygon>
+    <polygon points="0,-3 3,0 0,3 -3,0" fill="#fff5c8">
+      <animateTransform attributeName="transform" type="rotate"
+        from="0" to="-360" dur="4s" repeatCount="indefinite"/>
+    </polygon>
+  </g>
+
+  <!-- Side accents -->
+  <circle cx="540" cy="12" r="1.5" fill="#d4af37" opacity="0.7"/>
+  <circle cx="660" cy="12" r="1.5" fill="#d4af37" opacity="0.7"/>
+  <circle cx="500" cy="12" r="1" fill="#a89058" opacity="0.5"/>
+  <circle cx="700" cy="12" r="1" fill="#a89058" opacity="0.5"/>
+</svg>

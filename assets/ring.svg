@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 280">
+  <defs>
+    <radialGradient id="ringBg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1a1612" stop-opacity="0"/>
+      <stop offset="80%" stop-color="#0d0a07" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ringGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5d97a"/>
+      <stop offset="50%" stop-color="#d4af37"/>
+      <stop offset="100%" stop-color="#8b6914"/>
+    </linearGradient>
+    <linearGradient id="ringStone" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#fff5c8"/>
+      <stop offset="100%" stop-color="#d4af37"/>
+    </linearGradient>
+    <filter id="ringGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="280" height="280" fill="url(#ringBg)"/>
+
+  <!-- Sparkle particles around -->
+  <g fill="#d4af37">
+    <circle cx="40" cy="60" r="1" opacity="0.6">
+      <animate attributeName="opacity" values="0.6;0.1;0.6" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="240" cy="100" r="1.2" opacity="0.5">
+      <animate attributeName="opacity" values="0.5;0.1;0.5" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="50" cy="220" r="1" opacity="0.5">
+      <animate attributeName="opacity" values="0.5;0.1;0.5" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="230" cy="240" r="1" opacity="0.4">
+      <animate attributeName="opacity" values="0.4;0.1;0.4" dur="5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Rotating ring -->
+  <g transform="translate(140, 150)" filter="url(#ringGlow)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate"
+        from="0" to="360" dur="18s" repeatCount="indefinite"/>
+
+      <!-- Ring band with depth -->
+      <ellipse cx="0" cy="0" rx="90" ry="32" fill="none"
+        stroke="url(#ringGold)" stroke-width="3" opacity="0.95"/>
+      <ellipse cx="0" cy="0" rx="90" ry="32" fill="none"
+        stroke="#f5d97a" stroke-width="0.8" opacity="0.5" transform="rotate(15)"/>
+      <ellipse cx="0" cy="0" rx="90" ry="32" fill="none"
+        stroke="#a89058" stroke-width="0.8" opacity="0.4" transform="rotate(-15)"/>
+      <ellipse cx="0" cy="0" rx="75" ry="22" fill="none"
+        stroke="#8b6914" stroke-width="1" opacity="0.7"/>
+
+      <!-- Cross wireframes -->
+      <line x1="-90" y1="0" x2="90" y2="0" stroke="#d4af37" stroke-width="0.6" opacity="0.4"/>
+
+      <!-- Claws (prongs) — 4 of them -->
+      <g stroke="url(#ringGold)" stroke-width="2.5" fill="none" stroke-linecap="round">
+        <line x1="-45" y1="-23" x2="-45" y2="-55"/>
+        <line x1="45" y1="-23" x2="45" y2="-55"/>
+        <line x1="-18" y1="-30" x2="-18" y2="-62"/>
+        <line x1="18" y1="-30" x2="18" y2="-62"/>
+      </g>
+
+      <!-- Diamond center stone -->
+      <polygon points="0,-72 -28,-48 0,-32 28,-48" fill="url(#ringStone)" opacity="0.95"/>
+      <polygon points="0,-72 -28,-48 0,-32 28,-48" fill="none" stroke="#ffffff" stroke-width="1"/>
+      <line x1="-28" y1="-48" x2="28" y2="-48" stroke="#ffffff" stroke-width="0.6" opacity="0.7"/>
+      <line x1="0" y1="-72" x2="0" y2="-32" stroke="#ffffff" stroke-width="0.5" opacity="0.5"/>
+
+      <!-- Stone sparkle -->
+      <circle cx="-8" cy="-58" r="1.5" fill="#ffffff">
+        <animate attributeName="opacity" values="1;0.2;1" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </g>
+</svg>
