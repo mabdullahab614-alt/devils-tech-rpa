@@ -1,0 +1,49 @@
+# Claw Bot — runtime configuration.
+# This file is the single source of truth for environment-dependent values.
+# Code modules should resolve project paths relative to __file__, not from here.
+
+tailscale:
+  thinkpad:
+    hostname: bunny
+    ip: 100.109.139.94
+    os: kali-linux-6.18.12
+  a16:
+    hostname: aris-a16
+    ip: 100.71.10.69
+    os: android-16
+
+# n8n self-hosted on bunny. Webhook is reachable from the A16 over Tailscale.
+n8n:
+  host: 100.109.139.94
+  port: 5678
+  webhook_path: /webhook/clawbot/design-approve
+  webhook_url: http://100.109.139.94:5678/webhook/clawbot/design-approve
+
+# Orchestrator binds loopback only — n8n is on the same host.
+orchestrator:
+  host: 127.0.0.1
+  port: 8765
+
+karat:
+  default: "22K"
+  # Density table also lives in rhino_worker/density.py — keep them in sync if changed.
+  densities_g_per_cm3:
+    "24K": 19.32
+    "22K": 17.70
+    "21K": 16.50
+    "18K": 15.58
+    "14K": 13.07
+
+# Casting hardware profiles. Values are placeholders pending Mighty 8 / Nano Tech specs.
+machine_profiles:
+  mighty_8:
+    min_wall_thickness_mm: 0.5
+    stl_units: mm
+  nano_tech:
+    min_wall_thickness_mm: 0.5
+    stl_units: mm
+
+# RPA confidence thresholds.
+vision:
+  production_confidence: 0.92
+  calibration_confidence: 0.85

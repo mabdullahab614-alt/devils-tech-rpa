@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0.0",
+  "job_id": "job_a1b2c3d4",
+  "khep_id": "khep_001",
+  "variant_index": 7,
+  "approved_at": "2026-05-05T14:30:00+05:00",
+  "approved_by": "arham",
+  "source_image_uri": "khep_outputs/variations/khep_001/source.jpg",
+  "karat_target": "22K",
+  "base_template": "mala_turkish_v1.3dm",
+  "tier": 4,
+  "parameters": {
+    "chandak": {
+      "count": 14,
+      "diameter_mm": 6.0,
+      "finish": "granulated"
+    },
+    "paroi": {
+      "style": "s_link",
+      "wire_gauge_mm": 0.8
+    },
+    "latkan": {
+      "count": 7,
+      "motif": "leaf",
+      "treatment": "filigree",
+      "length_mm": 12.5,
+      "min_thickness_mm": 0.6
+    },
+    "filigree": {
+      "density_pct": 45,
+      "tier_ref": "medium"
+    }
+  },
+  "constraints": {
+    "abort_on_non_watertight": true,
+    "min_wall_thickness_mm": 0.5,
+    "max_mass_g": 35.0
+  },
+  "export_profiles": ["mighty_8", "nano_tech"],
+  "correlation_id": "trace_xyz123"
+}

@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://devils-tech.local/schemas/design_selection.schema.json",
+  "title": "DesignSelectionPayload",
+  "description": "Fired from the A16 approval UI to Phase C (RPA build + Rhino validate). Versioned: bump schema_version on any breaking change.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "job_id",
+    "khep_id",
+    "variant_index",
+    "approved_at",
+    "karat_target",
+    "base_template",
+    "tier",
+    "parameters",
+    "constraints",
+    "export_profiles"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Bumped on any breaking change to this schema."
+    },
+    "job_id": {
+      "type": "string",
+      "pattern": "^job_[a-z0-9_]{6,}$",
+      "description": "Unique per build attempt. Idempotency key for the orchestrator."
+    },
+    "khep_id": {
+      "type": "string",
+      "pattern": "^khep_[0-9]{3}$",
+      "description": "Identifies the Khep batch this variant came from."
+    },
+    "variant_index": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 18,
+      "description": "Which of the 18 Khep variants the user picked."
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "approved_by": {
+      "type": "string",
+      "default": "arham"
+    },
+    "source_image_uri": {
+      "type": "string",
+      "format": "uri-reference",
+      "description": "Pointer to the original reference image. Local path or URI."
+    },
+    "karat_target": {
+      "enum": ["24K", "22K", "21K", "18K", "14K"]
+    },
+    "base_template": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]+\\.3dm$",
+      "description": "Filename only, resolved against rhino_worker/templates/."
+    },
+    "tier": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "1=simple/commercial, 5=heavy/bridal."
+    },
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["chandak", "paroi", "latkan", "filigree"],
+      "properties": {
+        "chandak": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["count", "diameter_mm", "finish"],
+          "properties": {
+            "count": {"type": "integer", "minimum": 1, "maximum": 100},
+            "diameter_mm": {"type": "number", "minimum": 2.0, "maximum": 12.0},
+            "finish": {"enum": ["granulated", "smooth", "engraved", "filigreed"]}
+          }
+        },
+        "paroi": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["style", "wire_gauge_mm"],
+          "properties": {
+            "style": {"enum": ["s_link", "box_link", "rope", "flat_braid", "twisted"]},
+            "wire_gauge_mm": {"type": "number", "minimum": 0.4, "maximum": 1.5}
+          }
+        },
+        "latkan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["count", "motif", "treatment", "length_mm", "min_thickness_mm"],
+          "properties": {
+            "count": {"type": "integer", "minimum": 0, "maximum": 30},
+            "motif": {"enum": ["teardrop", "leaf", "crescent", "ball", "floral"]},
+            "treatment": {"enum": ["plain", "filigree", "granulated", "engraved", "stone_set"]},
+            "length_mm": {"type": "number", "minimum": 4.0, "maximum": 30.0},
+            "min_thickness_mm": {
+              "type": "number",
+              "minimum": 0.5,
+              "description": "Hard casting floor for gold. Below 0.5mm fails to cast cleanly on Mighty 8 / Nano Tech."
+            }
+          }
+        },
+        "filigree": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["density_pct", "tier_ref"],
+          "properties": {
+            "density_pct": {"type": "integer", "minimum": 0, "maximum": 100},
+            "tier_ref": {"enum": ["light", "medium", "heavy"]}
+          }
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["abort_on_non_watertight", "min_wall_thickness_mm"],
+      "properties": {
+        "abort_on_non_watertight": {
+          "type": "boolean",
+          "const": true,
+          "description": "Locked. The watertight gate cannot be disabled via payload."
+        },
+        "min_wall_thickness_mm": {
+          "type": "number",
+          "minimum": 0.5
+        },
+        "max_mass_g": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Optional ceiling. Orchestrator aborts if calculated mass exceeds this."
+        }
+      }
+    },
+    "export_profiles": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"enum": ["mighty_8", "nano_tech"]}
+    },
+    "correlation_id": {
+      "type": "string",
+      "description": "Optional trace id for log correlation across n8n / orchestrator / Rhino worker."
+    }
+  }
+}

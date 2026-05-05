@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Environment
+.env
+.env.local
+
+# n8n persistent data (lives in Docker volume on bunny)
+n8n_data/
+
+# Khep generated outputs — regenerable, not source
+khep_outputs/variations/
+khep_outputs/production/
+khep_outputs/jobs/queued/
+khep_outputs/jobs/running/
+khep_outputs/jobs/done/
+khep_outputs/jobs/failed/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp

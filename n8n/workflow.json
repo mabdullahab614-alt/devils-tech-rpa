@@ -1,0 +1,111 @@
+{
+  "name": "Claw Bot — Design Selection",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "clawbot/design-approve",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook (A16 approval)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "clawbot-design-approve"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lightweight gate. Strict JSON Schema validation runs in the orchestrator.\n// This level just rejects obvious garbage so we don't wake the ThinkPad worker for nothing.\n\nconst body = $input.first().json.body || $input.first().json;\n\nconst REQUIRED = [\n  'schema_version', 'job_id', 'khep_id', 'variant_index', 'approved_at',\n  'karat_target', 'base_template', 'tier', 'parameters', 'constraints', 'export_profiles'\n];\nconst KARATS = ['24K', '22K', '21K', '18K', '14K'];\n\nconst missing = REQUIRED.filter(k => !(k in body));\nif (missing.length) {\n  return [{ json: { valid: false, error: `missing fields: ${missing.join(', ')}` } }];\n}\nif (body.schema_version !== '1.0.0') {\n  return [{ json: { valid: false, error: `unsupported schema_version: ${body.schema_version}` } }];\n}\nif (!KARATS.includes(body.karat_target)) {\n  return [{ json: { valid: false, error: `invalid karat_target: ${body.karat_target}` } }];\n}\nif (body.constraints?.abort_on_non_watertight !== true) {\n  return [{ json: { valid: false, error: 'constraints.abort_on_non_watertight must be true' } }];\n}\nif (!Array.isArray(body.export_profiles) || body.export_profiles.length === 0) {\n  return [{ json: { valid: false, error: 'export_profiles must be a non-empty array' } }];\n}\n\nreturn [{ json: { valid: true, payload: body } }];"
+      },
+      "name": "Pre-flight Validate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.valid }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:8765/jobs",
+        "method": "POST",
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={{ JSON.stringify($json.payload) }}",
+        "options": {
+          "timeout": 5000,
+          "response": {
+            "response": {
+              "neverError": true,
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "name": "Dispatch to Orchestrator",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { job_id: $('Pre-flight Validate').first().json.payload.job_id, status: 'queued', orchestrator_status: $json.statusCode } }}",
+        "options": {}
+      },
+      "name": "Respond Queued",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseCode": 400,
+        "responseBody": "={{ { error: $json.error } }}",
+        "options": {}
+      },
+      "name": "Respond Invalid",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 400]
+    }
+  ],
+  "connections": {
+    "Webhook (A16 approval)": {
+      "main": [[{"node": "Pre-flight Validate", "type": "main", "index": 0}]]
+    },
+    "Pre-flight Validate": {
+      "main": [[{"node": "Valid?", "type": "main", "index": 0}]]
+    },
+    "Valid?": {
+      "main": [
+        [{"node": "Dispatch to Orchestrator", "type": "main", "index": 0}],
+        [{"node": "Respond Invalid", "type": "main", "index": 0}]
+      ]
+    },
+    "Dispatch to Orchestrator": {
+      "main": [[{"node": "Respond Queued", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "versionId": "1",
+  "tags": [{"name": "clawbot"}]
+}

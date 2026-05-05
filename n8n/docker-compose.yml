@@ -1,0 +1,20 @@
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: clawbot-n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=100.109.139.94
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://100.109.139.94:5678/
+      - GENERIC_TIMEZONE=Asia/Karachi
+      - TZ=Asia/Karachi
+      # First-launch wizard creates the owner account; no env passwords needed.
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  n8n_data:
