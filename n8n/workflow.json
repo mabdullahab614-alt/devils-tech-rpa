@@ -41,7 +41,7 @@
     },
     {
       "parameters": {
-        "url": "http://localhost:8765/jobs",
+        "url": "http://host.docker.internal:8765/jobs",
         "method": "POST",
         "sendBody": true,
         "bodyContentType": "json",
